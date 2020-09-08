@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-#BACKEND_AUTHORIZATION = os.getenv("BACKEND_AUTHORIZATION")
+BACKEND_AUTHORIZATION = os.getenv("BACKEND_AUTHORIZATION")
 
 recommend_time = Blueprint('recommend_time', __name__)
 
