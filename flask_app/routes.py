@@ -13,11 +13,11 @@ recommend_time = Blueprint('recommend_time', __name__)
 @recommend_time.route('/recommend', methods=['POST'])
 def recommendation():
     user_input = request.get_json()
-    #_id = user_input['id']
+    _id = user_input['id']
     twitter_handle = user_input['screenname']
 
-    #backend_url = 'https://api.so-me.net/api/posts/' + str(_id)
-    #header_data = {'Authorization' : BACKEND_AUTHORIZATION}
+    backend_url = 'https://api.so-me.net/api/posts/' + str(_id)
+    header_data = {'Authorization' : BACKEND_AUTHORIZATION}
 
     dw = data_wrangling(twitter_handle, 5)
     followers_ids = dw.followers_ids()
@@ -26,6 +26,6 @@ def recommendation():
 
     baseline_time = {"optimal_time": optimal_time}
 
-    #r = requests.put(backend_url, headers = header_data, json=baseline_time)
+    r = requests.put(backend_url, headers = header_data, json=baseline_time)
     
     return jsonify(baseline_time)
