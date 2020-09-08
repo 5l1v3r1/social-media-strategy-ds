@@ -17,7 +17,7 @@ def recommendation():
     twitter_handle = user_input['screenname']
 
     #backend_url = 'https://api.so-me.net/api/posts/' + str(_id)
-    header_data = {'Authorization' : BACKEND_AUTHORIZATION}
+    #header_data = {'Authorization' : BACKEND_AUTHORIZATION}
 
     dw = data_wrangling(twitter_handle, 5)
     followers_ids = dw.followers_ids()
