@@ -30,7 +30,6 @@ async def root():
 
 @app.post('/recommend')
 async def recommendation(user_input: timeRequest):
-    print('helloooo')
     request_dict = user_input.dict()
 
     twitter_handle = request_dict['screenname']
