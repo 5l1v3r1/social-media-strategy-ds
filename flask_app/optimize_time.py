@@ -19,6 +19,23 @@ auth = tweepy.OAuthHandler(TWITTER_API_KEY, TWITTER_API_SECRET)
 auth.set_access_token(TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET)
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
+# Helper functions
+def todays_date():
+    """Returns today's date in UTC"""
+    today = date.today()
+    day = today.strftime("%b-%d-%Y").replace('-', ' ')
+    my_date = date.today()
+    return calendar.day_name[my_date.weekday()][:3] + ' ' + day
+
+def min_bin (mins):
+    """Bins the minutes of when our followers engage into 00 and 30"""
+    l = []
+    for _min in mins:
+        if _min < 30:
+            l.append('00')
+        else:
+            l.append('30')
+    return l
 
 class data_wrangling:
     
@@ -29,26 +46,9 @@ class data_wrangling:
         # instance variables (unique for each instance of the class)
         self.user_id = user_id
         self.follower_count = follower_count
-
-    def todays_date():
-        today = date.today()
-        day = today.strftime("%b-%d-%Y").replace('-', ' ')
-        my_date = date.today()
-        return calendar.day_name[my_date.weekday()][:3] + ' ' + day
-    
-    def min_bin (mins):
-        l = []
-        for _min in mins:
-            if _min < 30:
-                l.append('00')
-            else:
-                l.append('30')
-
-        return l
         
-        
-    # The first 10 ids of the user's followers
     def followers_ids(self):
+        """Returns the first 10 ids of the user's followers"""
         followers_ids = api.followers_ids(self.user_id)
         return followers_ids
     
@@ -65,7 +65,7 @@ class data_wrangling:
 
                 favorited_tweets = api.favorites(id=f'{followers}')
 
-                # Fir each tweet that the follower liked, lets add it to the l string    
+                # Add each tweet that the current follower engaged with to the list  
                 for tweet in range(len(favorited_tweets)):
 
                     status = favorited_tweets[tweet]
@@ -75,7 +75,8 @@ class data_wrangling:
 
                     #deserialise string into python object
                     parsed = json.loads(json_str)
-                    # gets the created_at (time) and the text from the tweets the followers liked
+                    
+                    # gets the created_at (time) and the text from the tweets the followers engaged with
                     times.append(parsed.get('created_at'))
                     text.append(parsed.get('text'))
 
@@ -83,12 +84,12 @@ class data_wrangling:
 
                 pass
 
-        # seperates hours, mins into lists to be put into a df (leave hours as str to keep in military time for put request to backend)
+        # Seperates hours, mins into lists to be put into a df (leave hours as str to keep in military time for put request to backend)
         hours, mins = [i[11:13] for i in times], [int(i[14:16]) for i in times]
         
-        _min_bin = data_wrangling.min_bin(mins)
+        _min_bin = min_bin(mins)
          
-        # creates df with times and text
+        # Creates df with times and text
         df = pd.DataFrame(data={'hours':hours, 'mins':mins, 'min_bin':_min_bin, 'text':text})
         
         df['time'] = df['hours'].astype(str) + ':' + df['min_bin'].astype(str)
