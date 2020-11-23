@@ -19,12 +19,12 @@ def recommendation():
     backend_url = 'https://api.so-me.net/api/posts/' + str(_id)
     header_data = {'Authorization' : BACKEND_AUTHORIZATION}
 
-    dw = data_wrangling(twitter_handle, 5)
-    followers_ids = dw.followers_ids()
-    get_follower_data = dw.get_follower_data(followers_ids)
-    optimal_time = dw.optimal_time(get_follower_data)
+    dw_object = data_wrangling(twitter_handle, 5)
+    followers_ids = dw_object.followers_ids()
+    get_follower_data = dw_object.get_follower_data(followers_ids)
+    optimal_time = dw_object.optimal_time(get_follower_data)
 
-    baseline_time = {"optimal_time": optimal_time}
+    optimal_time = {"optimal_time": optimal_time}
 
     r = requests.put(backend_url, headers = header_data, json=baseline_time)
     
